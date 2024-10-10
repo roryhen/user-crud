@@ -1,16 +1,38 @@
 ---
+import { db, User } from 'astro:db'
+import Layout from '../components/Layout.astro'
+import AddUser from '../components/AddUser.tsx'
 
+const users = await db.select().from(User)
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="User CRUD">
+  <h1 class="py-6 text-2xl font-bold">Users</h1>
+  <div class="grid grid-cols-4 text-sm">
+    <div class="border-b border-t border-s dark:border-slate-600 rounded-tl-md px-4 py-2 text-start font-medium">
+      First Name
+    </div>
+    <div class="border-b border-t dark:border-slate-600 px-4 py-2 text-start font-medium">
+      Last Name
+    </div>
+    <div class="border-b border-t dark:border-slate-600 px-4 py-2 text-start font-medium">Email</div>
+    <div class="border-b border-t border-e dark:border-slate-600 rounded-tr-md px-4 py-2 text-start font-medium">
+      Password
+    </div>
+    {
+      users.map(({ first_name, last_name, email, password }) => (
+        <>
+          <div class="dark:border-slate-600 border-l border-b px-4 py-2 text-start">
+            {first_name}
+          </div>
+          <div class="dark:border-slate-600 border-b px-4 py-2 text-start">{last_name}</div>
+          <div class="dark:border-slate-600 border-b px-4 py-2 text-start">{email}</div>
+          <div class="dark:border-slate-600 border-e border-b px-4 py-2 text-start">
+            {password}
+          </div>
+        </>
+      ))
+    }
+    <AddUser client:load />
+  </div>
+</Layout>
