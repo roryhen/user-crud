@@ -1,34 +1,51 @@
 ---
-import { db, User } from 'astro:db'
-import Layout from '../components/Layout.astro'
-import AddUser from '../components/AddUser.tsx'
+import { db, User } from "astro:db";
+import Layout from "../components/Layout.astro";
+import AddUser from "../components/AddUser.tsx";
 
-const users = await db.select().from(User)
+const users = await db.select().from(User);
 ---
 
 <Layout title="User CRUD">
   <h1 class="py-6 text-2xl font-bold">Users</h1>
   <div class="grid grid-cols-4 text-sm">
-    <div class="border-b border-t border-s dark:border-slate-600 rounded-tl-md px-4 py-2 text-start font-medium">
+    <div
+      class="rounded-tl-md border-b border-s border-t px-4 py-2 text-start font-medium dark:border-slate-600"
+    >
       First Name
     </div>
-    <div class="border-b border-t dark:border-slate-600 px-4 py-2 text-start font-medium">
+    <div
+      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
+    >
       Last Name
     </div>
-    <div class="border-b border-t dark:border-slate-600 px-4 py-2 text-start font-medium">Email</div>
-    <div class="border-b border-t border-e dark:border-slate-600 rounded-tr-md px-4 py-2 text-start font-medium">
+    <div
+      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
+    >
+      Email
+    </div>
+    <div
+      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
+    >
       Password
+    </div>
+    <div
+      class="col-start-5 rounded-tr-md border-b border-e border-t px-4 py-2 text-start font-medium dark:border-slate-600"
+    >
     </div>
     {
       users.map(({ first_name, last_name, email, password }) => (
         <>
-          <div class="dark:border-slate-600 border-l border-b px-4 py-2 text-start">
+          <div class="border-b border-l px-4 py-2 dark:border-slate-600">
             {first_name}
           </div>
-          <div class="dark:border-slate-600 border-b px-4 py-2 text-start">{last_name}</div>
-          <div class="dark:border-slate-600 border-b px-4 py-2 text-start">{email}</div>
-          <div class="dark:border-slate-600 border-e border-b px-4 py-2 text-start">
-            {password}
+          <div class="border-b px-4 py-2 dark:border-slate-600">
+            {last_name}
+          </div>
+          <div class="border-b px-4 py-2 dark:border-slate-600">{email}</div>
+          <div class="border-b px-4 py-2 dark:border-slate-600">{password}</div>
+          <div class="col-start-5 border-b border-e px-4 py-2 dark:border-slate-600">
+            edit remove
           </div>
         </>
       ))

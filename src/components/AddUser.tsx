@@ -15,7 +15,7 @@ function Input(props: {
 }) {
   return (
     <input
-      class="border dark:border-slate-600 bg-transparent placeholder-slate-600 rounded px-2 py-1"
+      class="mx-2 my-2 rounded-none border-0 border-b bg-transparent px-2 py-1 placeholder-slate-600 dark:border-slate-600"
       name={props.name}
       placeholder={props.placeholder}
       onInput={(e) => props.setter(props.name, e.target.value)}
@@ -46,13 +46,16 @@ export default function AddUser() {
   return (
     <>
       <div
-        class="border-x border-b dark:border-slate-600 grid grid-cols-4 col-span-4 rounded-b-md p-2 space-x-2"
+        class="col-span-5 grid grid-cols-4 rounded-b-md border-x border-b dark:border-slate-600"
         onKeyDown={add}
       >
         <Input name="first_name" placeholder="First Name" setter={setStore} />
         <Input name="last_name" placeholder="Last Name" setter={setStore} />
         <Input name="email" placeholder="Email" setter={setStore} />
         <Input name="password" placeholder="Password" setter={setStore} />
+        <div class="col-start-5 px-4 py-2">
+          <span class="opacity-0">edit remove</span>
+        </div>
       </div>
       {error() && <div class="col-span-4 mt-4">{error()}</div>}
     </>

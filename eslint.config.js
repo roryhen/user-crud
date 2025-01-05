@@ -1,7 +1,3 @@
 import eslintPluginAstro from "eslint-plugin-astro";
-import stylistic from "@stylistic/eslint-plugin";
 
-export default [
-  stylistic.configs["recommended-flat"],
-  ...eslintPluginAstro.configs.recommended,
-];
+export default [...eslintPluginAstro.configs["jsx-a11y-recommended"]];
