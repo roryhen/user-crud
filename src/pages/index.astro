@@ -1,55 +1,26 @@
 ---
 import { db, User } from "astro:db";
 import Layout from "../components/Layout.astro";
-import AddUser from "../components/AddUser.tsx";
+import UserRow from "../components/UserRow.tsx";
+import RemoveIcon from "../components/RemoveIcon.astro";
+import EditIcon from "../components/edit-icon.svg";
 
 const users = await db.select().from(User);
 ---
 
 <Layout title="User CRUD">
   <h1 class="py-6 text-2xl font-bold">Users</h1>
-  <div class="grid grid-cols-4 text-sm">
-    <div
-      class="rounded-tl-md border-b border-s border-t px-4 py-2 text-start font-medium dark:border-slate-600"
-    >
-      First Name
+  <div
+    class="grid grid-cols-4 divide-y divide-slate-300 rounded-md border border-slate-300 text-start text-sm font-medium dark:divide-slate-600 dark:border-slate-600"
+  >
+    <div class="col-span-5 grid grid-cols-subgrid">
+      <div class="px-4 py-2">First Name</div>
+      <div class="px-4 py-2">Last Name</div>
+      <div class="px-4 py-2">Email</div>
+      <div class="px-4 py-2">Password</div>
+      <div class="col-start-5 px-4 py-2">&nbsp;</div>
     </div>
-    <div
-      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
-    >
-      Last Name
-    </div>
-    <div
-      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
-    >
-      Email
-    </div>
-    <div
-      class="border-b border-t px-4 py-2 text-start font-medium dark:border-slate-600"
-    >
-      Password
-    </div>
-    <div
-      class="col-start-5 rounded-tr-md border-b border-e border-t px-4 py-2 text-start font-medium dark:border-slate-600"
-    >
-    </div>
-    {
-      users.map(({ first_name, last_name, email, password }) => (
-        <>
-          <div class="border-b border-l px-4 py-2 dark:border-slate-600">
-            {first_name}
-          </div>
-          <div class="border-b px-4 py-2 dark:border-slate-600">
-            {last_name}
-          </div>
-          <div class="border-b px-4 py-2 dark:border-slate-600">{email}</div>
-          <div class="border-b px-4 py-2 dark:border-slate-600">{password}</div>
-          <div class="col-start-5 border-b border-e px-4 py-2 dark:border-slate-600">
-            edit remove
-          </div>
-        </>
-      ))
-    }
-    <AddUser client:load />
+    {users.map((user) => <UserRow user={user} client:load />)}
+    <UserRow client:load />
   </div>
 </Layout>

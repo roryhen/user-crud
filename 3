@@ -1,0 +1,43 @@
+---
+import { db, User } from "astro:db";
+import Layout from "../components/Layout.astro";
+import AddUser from "../components/AddUser.tsx";
+import RemoveIcon from "../components/RemoveIcon.astro";
+import EditIcon from "../components/EditIcon.astro";
+
+const users = await db.select().from(User);
+---
+
+<Layout title="User CRUD">
+  <h1 class="py-6 text-2xl font-bold">Users</h1>
+  <div
+    class="grid grid-cols-4 divide-y divide-slate-500 rounded-md border text-start text-sm font-medium dark:divide-slate-600 dark:border-slate-600"
+  >
+    <div class="col-span-5 grid grid-cols-subgrid">
+      <div class="px-4 py-2">First Name</div>
+      <div class="px-4 py-2">Last Name</div>
+      <div class="px-4 py-2">Email</div>
+      <div class="px-4 py-2">Password</div>
+      <div class="col-start-5 px-4 py-2">s</div>
+    </div>
+    {
+      users.map(({ first_name, last_name, email, password }) => (
+        <div class="col-span-5 grid grid-cols-subgrid">
+          <div class="px-4 py-2">{first_name}</div>
+          <div class="px-4 py-2">{last_name}</div>
+          <div class="px-4 py-2">{email}</div>
+          <div class="px-4 py-2">{password}</div>
+          <div class="col-start-5 px-4 py-2">
+            <button class="-my-1 p-2">
+              <EditIcon />
+            </button>
+            <button class="-my-1 p-2">
+              <RemoveIcon />
+            </button>
+          </div>
+        </div>
+      ))
+    }
+    <AddUser client:load />
+  </div>
+</Layout>
