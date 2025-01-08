@@ -2,8 +2,6 @@
 import { db, User } from "astro:db";
 import Layout from "../components/Layout.astro";
 import UserRow from "../components/UserRow.tsx";
-import RemoveIcon from "../components/RemoveIcon.astro";
-import EditIcon from "../components/edit-icon.svg";
 
 const users = await db.select().from(User);
 ---

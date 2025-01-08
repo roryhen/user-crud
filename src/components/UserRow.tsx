@@ -1,11 +1,12 @@
-import { createStore, type SetStoreFunction } from "solid-js/store";
 import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
-import { createSignal, Switch, Match, Show, createEffect } from "solid-js";
-import editIcon from "../../public/edit-icon.svg?raw";
-import removeIcon from "../../public/remove-icon.svg?raw";
+import { createSignal, Match, Switch } from "solid-js";
+import { createStore, type SetStoreFunction } from "solid-js/store";
 import checkIcon from "../../public/check-icon.svg?raw";
+import editIcon from "../../public/edit-icon.svg?raw";
 import plusIcon from "../../public/plus-icon.svg?raw";
+import removeIcon from "../../public/remove-icon.svg?raw";
+import closeIcon from "../../public/close-icon.svg?raw";
 
 function Input(props: {
   name: "first_name" | "last_name" | "email" | "password";
@@ -39,6 +40,7 @@ export default function AddUser(props: {
     password: string;
   };
 }) {
+  let divRef: HTMLDivElement | undefined;
   const [error, setError] = createSignal("");
   const [editing, setEditing] = createSignal(false);
   const [store, setStore] = createStore({
@@ -51,8 +53,18 @@ export default function AddUser(props: {
   });
 
   async function addUser() {
-    setError("");
     setEditing(true);
+    divRef?.querySelector("input")?.focus();
+  }
+
+  async function cancelEdit() {
+    setEditing(false);
+  }
+
+  function keyUpdate(e: KeyboardEvent) {
+    if (e.key === "Enter") {
+      updateUser();
+    }
   }
 
   async function updateUser() {
@@ -70,6 +82,7 @@ export default function AddUser(props: {
 
   async function removeUser() {
     setError("");
+
     const msg = "Are you sure you want to delete this user?";
     if (!editing() && confirm(msg)) {
       const { error } = await actions.removeUser({ email: store.user.email });
@@ -85,7 +98,8 @@ export default function AddUser(props: {
     <>
       <div
         class="col-span-5 grid grid-cols-subgrid items-center border-t border-slate-300 dark:border-slate-600"
-        onKeyDown={updateUser}
+        onKeyDown={keyUpdate}
+        ref={divRef}
       >
         <Switch>
           <Match when={editing()}>
@@ -120,6 +134,9 @@ export default function AddUser(props: {
             <div class="px-4 py-3">{props.user?.email}</div>
             <div class="px-4 py-3">{props.user?.password}</div>
           </Match>
+          <Match when={!props.user}>
+            <div class="px-4 py-3">&nbsp;</div>
+          </Match>
         </Switch>
         <div class="col-start-5 px-4 py-2">
           <Switch>
@@ -127,15 +144,21 @@ export default function AddUser(props: {
               <button
                 class="-my-1 p-2"
                 innerHTML={checkIcon}
-                title="Update User"
+                title="Update user"
                 onClick={updateUser}
+              ></button>
+              <button
+                class="-my-1 p-2"
+                innerHTML={closeIcon}
+                title="Cancel edit"
+                onClick={cancelEdit}
               ></button>
             </Match>
             <Match when={!props.user}>
               <button
                 class="-my-1 p-2"
                 innerHTML={plusIcon}
-                title="Add User"
+                title="Add user"
                 onClick={addUser}
               ></button>
             </Match>
@@ -143,13 +166,13 @@ export default function AddUser(props: {
               <button
                 class="-my-1 p-2"
                 innerHTML={editIcon}
-                title="Edit User"
+                title="Edit user"
                 onClick={() => setEditing(true)}
               ></button>
               <button
                 class="-my-1 p-2"
                 innerHTML={removeIcon}
-                title="Remove User"
+                title="Remove user"
                 onClick={removeUser}
               ></button>
             </Match>
