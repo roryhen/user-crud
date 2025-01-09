@@ -2,11 +2,11 @@ import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
 import { createSignal, Match, Switch } from "solid-js";
 import { createStore, type SetStoreFunction } from "solid-js/store";
-import checkIcon from "../../public/check-icon.svg?raw";
-import editIcon from "../../public/edit-icon.svg?raw";
-import plusIcon from "../../public/plus-icon.svg?raw";
-import removeIcon from "../../public/remove-icon.svg?raw";
-import closeIcon from "../../public/close-icon.svg?raw";
+import checkIcon from "../assets/check-icon.svg?raw";
+import editIcon from "../assets/edit-icon.svg?raw";
+import plusIcon from "../assets/plus-icon.svg?raw";
+import removeIcon from "../assets/remove-icon.svg?raw";
+import closeIcon from "../assets/close-icon.svg?raw";
 
 function Input(props: {
   name: "first_name" | "last_name" | "email" | "password";
