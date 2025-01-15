@@ -1,36 +1,13 @@
 import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
 import { createSignal, Match, Switch } from "solid-js";
-import { createStore, type SetStoreFunction } from "solid-js/store";
+import { createStore } from "solid-js/store";
 import checkIcon from "../assets/check-icon.svg?raw";
+import closeIcon from "../assets/close-icon.svg?raw";
 import editIcon from "../assets/edit-icon.svg?raw";
 import plusIcon from "../assets/plus-icon.svg?raw";
 import removeIcon from "../assets/remove-icon.svg?raw";
-import closeIcon from "../assets/close-icon.svg?raw";
-
-function Input(props: {
-  name: "first_name" | "last_name" | "email" | "password";
-  placeholder: string;
-  value?: string;
-  setter: SetStoreFunction<{
-    user: {
-      first_name: string;
-      last_name: string;
-      email: string;
-      password: string;
-    };
-  }>;
-}) {
-  return (
-    <input
-      class="mx-2 my-2 border-0 border-b border-slate-400 bg-transparent px-2 pb-[0.1875rem] pt-1 placeholder-slate-400 dark:border-slate-600 dark:placeholder-slate-600"
-      name={props.name}
-      placeholder={props.placeholder}
-      onInput={(e) => props.setter("user", props.name, e.target.value)}
-      value={props.value || ""}
-    />
-  );
-}
+import { Input } from "./Input";
 
 export default function AddUser(props: {
   user?: {
@@ -40,7 +17,7 @@ export default function AddUser(props: {
     password: string;
   };
 }) {
-  let divRef: HTMLDivElement | undefined;
+  let formRef: HTMLFormElement | undefined;
   const [error, setError] = createSignal("");
   const [editing, setEditing] = createSignal(false);
   const [store, setStore] = createStore({
@@ -54,29 +31,20 @@ export default function AddUser(props: {
 
   async function addUser() {
     setEditing(true);
-    divRef?.querySelector("input")?.focus();
+    formRef?.querySelector("input")?.focus();
   }
 
   async function cancelEdit() {
     setEditing(false);
   }
 
-  function keyUpdate(e: KeyboardEvent) {
-    if (e.key === "Enter") {
-      updateUser();
-    }
-  }
-
-  async function updateUser() {
+  async function updateUser(e: SubmitEvent) {
+    e.preventDefault();
     setError("");
 
     if (editing()) {
       const { error } = await actions.updateUser({ ...store.user });
-      if (!error) {
-        navigate("/");
-      } else {
-        setError(error.message);
-      }
+      error ? setError(error.message) : navigate("/");
     }
   }
 
@@ -86,20 +54,16 @@ export default function AddUser(props: {
     const msg = "Are you sure you want to delete this user?";
     if (!editing() && confirm(msg)) {
       const { error } = await actions.removeUser({ email: store.user.email });
-      if (!error) {
-        navigate("/");
-      } else {
-        setError(error.message);
-      }
+      error ? setError(error.message) : navigate("/");
     }
   }
 
   return (
     <>
-      <div
+      <form
         class="col-span-5 grid grid-cols-subgrid items-center border-t border-slate-300 dark:border-slate-600"
-        onKeyDown={keyUpdate}
-        ref={divRef}
+        onSubmit={updateUser}
+        ref={formRef}
       >
         <Switch>
           <Match when={editing()}>
@@ -145,13 +109,14 @@ export default function AddUser(props: {
                 class="-my-1 p-2"
                 innerHTML={checkIcon}
                 title="Update user"
-                onClick={updateUser}
+                type="submit"
               ></button>
               <button
                 class="-my-1 p-2"
                 innerHTML={closeIcon}
                 title="Cancel edit"
                 onClick={cancelEdit}
+                type="button"
               ></button>
             </Match>
             <Match when={!props.user}>
@@ -160,6 +125,7 @@ export default function AddUser(props: {
                 innerHTML={plusIcon}
                 title="Add user"
                 onClick={addUser}
+                type="button"
               ></button>
             </Match>
             <Match when={!editing()}>
@@ -168,17 +134,19 @@ export default function AddUser(props: {
                 innerHTML={editIcon}
                 title="Edit user"
                 onClick={() => setEditing(true)}
+                type="button"
               ></button>
               <button
                 class="-my-1 p-2"
                 innerHTML={removeIcon}
                 title="Remove user"
                 onClick={removeUser}
+                type="button"
               ></button>
             </Match>
           </Switch>
         </div>
-      </div>
+      </form>
       {error() && (
         <div class="fixed bottom-6 end-6 flex gap-6 rounded-md border border-slate-300 px-6 py-4 text-rose-800 dark:border-slate-600 dark:text-rose-400">
           {error()}
